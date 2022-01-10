@@ -1,0 +1,28 @@
+name: Fetch Secrets from AWS SSM using OpenID Connect
+
+on: workflow_dispatch
+
+permissions:
+  id-token: write
+  contents: read    # This is required for actions/checkout@v2
+
+jobs:
+
+  get_secrets_from_aws_ssm:
+    name: get and use parameters from AWS SSM
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v2
+
+      - name: authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: eu-central-1
+
+      - name: hello world
+        run: |
+          aws ssm get-parameter --name HelloWorld --query Parameter.Value
